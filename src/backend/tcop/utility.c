@@ -1893,10 +1893,6 @@ ProcessUtilitySlow(ParseState *pstate,
 				address = AlterStatistics((AlterStatsStmt *) parsetree);
 				break;
 
-			case T_AlterCollationStmt:
-				address = AlterCollation((AlterCollationStmt *) parsetree);
-				break;
-
 			default:
 				elog(ERROR, "unrecognized node type: %d",
 					 (int) nodeTag(parsetree));
@@ -3053,10 +3049,6 @@ CreateCommandTag(Node *parsetree)
 			tag = CMDTAG_DROP_SUBSCRIPTION;
 			break;
 
-		case T_AlterCollationStmt:
-			tag = CMDTAG_ALTER_COLLATION;
-			break;
-
 		case T_PrepareStmt:
 			tag = CMDTAG_PREPARE;
 			break;
@@ -3675,10 +3667,6 @@ GetCommandLogLevel(Node *parsetree)
 			break;
 
 		case T_AlterStatsStmt:
-			lev = LOGSTMT_DDL;
-			break;
-
-		case T_AlterCollationStmt:
 			lev = LOGSTMT_DDL;
 			break;
 

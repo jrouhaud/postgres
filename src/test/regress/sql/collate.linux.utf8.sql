@@ -406,15 +406,6 @@ DROP SCHEMA test_schema;
 DROP ROLE regress_test_role;
 
 
--- ALTER
-
-ALTER COLLATION "en_US" REFRESH VERSION;
-
--- also test for database while we are here
-SELECT current_database() AS datname \gset
-ALTER DATABASE :"datname" REFRESH COLLATION VERSION;
-
-
 -- dependencies
 
 CREATE COLLATION test0 FROM "C";

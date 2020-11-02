@@ -283,8 +283,6 @@ CREATE COLLATION coll_dup_chk (PROVIDER = icu, PROVIDER = NONSENSE, LC_COLLATE =
 CREATE COLLATION case_sensitive (LOCALE = '', LOCALE = "NONSENSE");
 -- DETERMINISTIC
 CREATE COLLATION coll_dup_chk (DETERMINISTIC = TRUE, DETERMINISTIC = NONSENSE, LOCALE = '');
--- VERSION
-CREATE COLLATION coll_dup_chk (VERSION = '1', VERSION = "NONSENSE", LOCALE = '');
 -- LOCALE conflicts with LC_COLLATE and LC_CTYPE
 CREATE COLLATION coll_dup_chk (LC_COLLATE = "POSIX", LC_CTYPE = "POSIX", LOCALE = '');
 -- LOCALE conflicts with LC_COLLATE
@@ -292,7 +290,7 @@ CREATE COLLATION coll_dup_chk (LC_COLLATE = "POSIX", LOCALE = '');
 -- LOCALE conflicts with LC_CTYPE
 CREATE COLLATION coll_dup_chk (LC_CTYPE = "POSIX", LOCALE = '');
 -- FROM conflicts with any other option
-CREATE COLLATION coll_dup_chk (FROM = "C", VERSION = "1");
+CREATE COLLATION coll_dup_chk (FROM = "C", LOCALE = '');
 
 --
 -- Clean up.  Many of these table names will be re-used if the user is

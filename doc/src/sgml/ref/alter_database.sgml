@@ -177,8 +177,8 @@ ALTER DATABASE <replaceable class="parameter">name</replaceable> RESET ALL
     <term><literal>REFRESH COLLATION VERSION</literal></term>
     <listitem>
      <para>
-      Update the database collation version.  See <xref
-      linkend="sql-altercollation-notes"/> for background.
+      Update the database collation version.  See
+      linkend="sql-altercollation-notes" for background.
      </para>
     </listitem>
    </varlistentry>
