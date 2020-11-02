@@ -727,11 +727,6 @@ CREATE COLLATION coll_dup_chk (DETERMINISTIC = TRUE, DETERMINISTIC = NONSENSE, L
 ERROR:  conflicting or redundant options
 LINE 1: ...ATE COLLATION coll_dup_chk (DETERMINISTIC = TRUE, DETERMINIS...
                                                              ^
--- VERSION
-CREATE COLLATION coll_dup_chk (VERSION = '1', VERSION = "NONSENSE", LOCALE = '');
-ERROR:  conflicting or redundant options
-LINE 1: CREATE COLLATION coll_dup_chk (VERSION = '1', VERSION = "NON...
-                                                      ^
 -- LOCALE conflicts with LC_COLLATE and LC_CTYPE
 CREATE COLLATION coll_dup_chk (LC_COLLATE = "POSIX", LC_CTYPE = "POSIX", LOCALE = '');
 ERROR:  conflicting or redundant options
@@ -745,7 +740,7 @@ CREATE COLLATION coll_dup_chk (LC_CTYPE = "POSIX", LOCALE = '');
 ERROR:  conflicting or redundant options
 DETAIL:  LOCALE cannot be specified together with LC_COLLATE or LC_CTYPE.
 -- FROM conflicts with any other option
-CREATE COLLATION coll_dup_chk (FROM = "C", VERSION = "1");
+CREATE COLLATION coll_dup_chk (FROM = "C", LOCALE = '');
 ERROR:  conflicting or redundant options
 DETAIL:  FROM cannot be specified together with any other options.
 --

@@ -3364,16 +3364,6 @@ _copyAlterTableCmd(const AlterTableCmd *from)
 	return newnode;
 }
 
-static AlterCollationStmt *
-_copyAlterCollationStmt(const AlterCollationStmt *from)
-{
-	AlterCollationStmt *newnode = makeNode(AlterCollationStmt);
-
-	COPY_NODE_FIELD(collname);
-
-	return newnode;
-}
-
 static AlterDomainStmt *
 _copyAlterDomainStmt(const AlterDomainStmt *from)
 {
@@ -5439,9 +5429,6 @@ copyObjectImpl(const void *from)
 			break;
 		case T_AlterTableCmd:
 			retval = _copyAlterTableCmd(from);
-			break;
-		case T_AlterCollationStmt:
-			retval = _copyAlterCollationStmt(from);
 			break;
 		case T_AlterDomainStmt:
 			retval = _copyAlterDomainStmt(from);

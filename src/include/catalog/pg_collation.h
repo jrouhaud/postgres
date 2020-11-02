@@ -42,9 +42,6 @@ CATALOG(pg_collation,3456,CollationRelationId)
 #ifdef CATALOG_VARLEN			/* variable-length fields start here */
 	text		collcollate BKI_FORCE_NOT_NULL;		/* LC_COLLATE setting */
 	text		collctype BKI_FORCE_NOT_NULL;		/* LC_CTYPE setting */
-	text		collversion BKI_DEFAULT(_null_);	/* provider-dependent
-													 * version of collation
-													 * data */
 #endif
 } FormData_pg_collation;
 
@@ -75,7 +72,6 @@ extern Oid	CollationCreate(const char *collname, Oid collnamespace,
 							bool collisdeterministic,
 							int32 collencoding,
 							const char *collcollate, const char *collctype,
-							const char *collversion,
 							bool if_not_exists,
 							bool quiet);
 

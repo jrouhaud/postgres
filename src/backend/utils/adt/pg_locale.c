@@ -1484,12 +1484,12 @@ pg_newlocale_from_collation(Oid collid)
 		/* We haven't computed this yet in this session, so do it */
 		HeapTuple	tp;
 		Form_pg_collation collform;
+		Datum		datum;
+		bool		isnull;
 		const char *collcollate;
 		const char *collctype pg_attribute_unused();
 		struct pg_locale_struct result;
 		pg_locale_t resultp;
-		Datum		datum;
-		bool		isnull;
 
 		tp = SearchSysCache1(COLLOID, ObjectIdGetDatum(collid));
 		if (!HeapTupleIsValid(tp))
@@ -1593,42 +1593,6 @@ pg_newlocale_from_collation(Oid collid)
 					 errmsg("ICU is not supported in this build"), \
 					 errhint("You need to rebuild PostgreSQL using %s.", "--with-icu")));
 #endif							/* not USE_ICU */
-		}
-
-		datum = SysCacheGetAttr(COLLOID, tp, Anum_pg_collation_collversion,
-									  &isnull);
-		if (!isnull)
-		{
-			char	   *actual_versionstr;
-			char	   *collversionstr;
-
-			collversionstr = TextDatumGetCString(datum);
-
-			actual_versionstr = get_collation_actual_version(collform->collprovider, collcollate);
-			if (!actual_versionstr)
-			{
-				/*
-				 * This could happen when specifying a version in CREATE
-				 * COLLATION but the provider does not support versioning, or
-				 * manually creating a mess in the catalogs.
-				 */
-				ereport(ERROR,
-						(errmsg("collation \"%s\" has no actual version, but a version was recorded",
-								NameStr(collform->collname))));
-			}
-
-			if (strcmp(actual_versionstr, collversionstr) != 0)
-				ereport(WARNING,
-						(errmsg("collation \"%s\" has version mismatch",
-								NameStr(collform->collname)),
-						 errdetail("The collation in the database was created using version %s, "
-								   "but the operating system provides version %s.",
-								   collversionstr, actual_versionstr),
-						 errhint("Rebuild all objects affected by this collation and run "
-								 "ALTER COLLATION %s REFRESH VERSION, "
-								 "or build PostgreSQL with the right library version.",
-								 quote_qualified_identifier(get_namespace_name(collform->collnamespace),
-															NameStr(collform->collname)))));
 		}
 
 		ReleaseSysCache(tp);
