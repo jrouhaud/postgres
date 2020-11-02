@@ -45,6 +45,7 @@
 
 #include "catalog/pg_am_d.h"
 #include "catalog/pg_class_d.h"
+#include "catalog/pg_collation_d.h"
 #include "common.h"
 #include "common/keywords.h"
 #include "libpq-fe.h"
@@ -894,6 +895,19 @@ static const SchemaQuery Query_for_list_of_collations = {
 	.viscondition = "pg_catalog.pg_collation_is_visible(c.oid)",
 	.namespace = "c.collnamespace",
 	.result = "c.collname",
+};
+
+static const SchemaQuery Query_for_list_of_colls_for_one_index = {
+	.catname = "pg_catalog.pg_depend d, pg_catalog.pg_collation coll, pg_catalog.pg_class",
+	.selcondition = "d.refclassid = " CppAsString2(CollationRelationId)
+		"   AND d.refobjid = coll.oid "
+		"   AND d.classid = " CppAsString2(RelationRelationId)
+		"   AND d.objid = c.oid "
+		"   AND c.relkind = " CppAsString2(RELKIND_INDEX),
+	.result = "c.collname",
+	.use_distinct = true,
+	.refname = "c.relname",
+	.refviscondition = "pg_catalog.pg_table_is_visible(c.oid)",
 };
 
 static const SchemaQuery Query_for_partition_of_table = {
@@ -1911,7 +1925,7 @@ psql_completion(const char *text, int start, int end)
 	/* ALTER INDEX <name> */
 	else if (Matches("ALTER", "INDEX", MatchAny))
 		COMPLETE_WITH("ALTER COLUMN", "OWNER TO", "RENAME TO", "SET",
-					  "RESET", "ATTACH PARTITION",
+					  "RESET", "ATTACH PARTITION", "ALTER COLLATION",
 					  "DEPENDS ON EXTENSION", "NO DEPENDS ON EXTENSION");
 	else if (Matches("ALTER", "INDEX", MatchAny, "ATTACH"))
 		COMPLETE_WITH("PARTITION");
@@ -1919,7 +1933,7 @@ psql_completion(const char *text, int start, int end)
 		COMPLETE_WITH_SCHEMA_QUERY(Query_for_list_of_indexes);
 	/* ALTER INDEX <name> ALTER */
 	else if (Matches("ALTER", "INDEX", MatchAny, "ALTER"))
-		COMPLETE_WITH("COLUMN");
+		COMPLETE_WITH("COLLATION", "COLUMN");
 	/* ALTER INDEX <name> ALTER COLUMN */
 	else if (Matches("ALTER", "INDEX", MatchAny, "ALTER", "COLUMN"))
 	{
@@ -1962,6 +1976,15 @@ psql_completion(const char *text, int start, int end)
 		COMPLETE_WITH("ON EXTENSION");
 	else if (Matches("ALTER", "INDEX", MatchAny, "DEPENDS"))
 		COMPLETE_WITH("ON EXTENSION");
+	/* ALTER INDEX <name> ALTER COLLATION */
+	else if (Matches("ALTER", "INDEX", MatchAny, "ALTER", "COLLATION"))
+	{
+		set_completion_reference(prev3_wd);
+		COMPLETE_WITH_SCHEMA_QUERY(Query_for_list_of_colls_for_one_index);
+	}
+	/* ALTER INDEX <name> ALTER COLLATION <name> */
+	else if (Matches("ALTER", "INDEX", MatchAny, "ALTER", "COLLATION", MatchAny))
+		COMPLETE_WITH("REFRESH VERSION");
 
 	/* ALTER LANGUAGE <name> */
 	else if (Matches("ALTER", "LANGUAGE", MatchAny))
