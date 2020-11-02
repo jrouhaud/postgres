@@ -430,7 +430,7 @@ publication_add_relation(Oid pubid, PublicationRelInfo *pri,
 	if (pri->whereClause)
 		recordDependencyOnSingleRelExpr(&myself, pri->whereClause, relid,
 										DEPENDENCY_NORMAL, DEPENDENCY_NORMAL,
-										false);
+										false, false);
 
 	/* Add dependency on the columns, if any are listed */
 	for (int i = 0; i < natts; i++)

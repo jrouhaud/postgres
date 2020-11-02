@@ -3417,7 +3417,8 @@ StorePartitionKey(Relation rel,
 										RelationGetRelid(rel),
 										DEPENDENCY_NORMAL,
 										DEPENDENCY_INTERNAL,
-										true /* reverse the self-deps */ );
+										true /* reverse the self-deps */ ,
+										false /* don't track versions */ );
 
 	/*
 	 * We must invalidate the relcache so that the next

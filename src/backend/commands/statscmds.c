@@ -564,7 +564,7 @@ CreateStatistics(CreateStatsStmt *stmt)
 										(Node *) stxexprs,
 										relid,
 										DEPENDENCY_NORMAL,
-										DEPENDENCY_AUTO, false);
+										DEPENDENCY_AUTO, false, false);
 
 	/*
 	 * Also add dependencies on namespace and owner.  These are required

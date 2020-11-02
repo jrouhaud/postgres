@@ -190,7 +190,7 @@ StoreAttrDefault(Relation rel, AttrNumber attnum,
 	 */
 	recordDependencyOnSingleRelExpr(&defobject, expr, RelationGetRelid(rel),
 									DEPENDENCY_NORMAL,
-									DEPENDENCY_NORMAL, false);
+									DEPENDENCY_NORMAL, false, false);
 
 	/*
 	 * Post creation hook for attribute defaults.
