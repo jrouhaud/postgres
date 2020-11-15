@@ -1491,7 +1491,7 @@ pg_newlocale_from_collation(Oid collid)
 		Form_pg_collation collform;
 		Datum		datum;
 		bool		isnull;
-		const char *collcollate;
+		const char *collcollate pg_attribute_unused();
 		const char *collctype pg_attribute_unused();
 		struct pg_locale_struct result;
 		pg_locale_t resultp;
