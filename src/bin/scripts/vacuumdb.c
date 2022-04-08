@@ -623,8 +623,8 @@ vacuum_one_database(ConnParams *cparams,
 	initPQExpBuffer(&catalog_query);
 	for (cell = objects ? objects->head : NULL; cell; cell = cell->next)
 	{
-		char	   *just_table;
-		const char *just_columns;
+		char	   *just_table = NULL;
+		const char *just_columns = NULL;
 
 		if (!objects_listed)
 		{
@@ -666,7 +666,8 @@ vacuum_one_database(ConnParams *cparams,
 
 		appendPQExpBufferStr(&catalog_query, "::pg_catalog.text)");
 
-		pg_free(just_table);
+		if (just_table)
+			pg_free(just_table);
 	}
 
 	/* Finish formatting the CTE */
