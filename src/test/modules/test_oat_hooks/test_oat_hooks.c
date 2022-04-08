@@ -750,7 +750,6 @@ nodetag_to_string(NodeTag tag)
 		case T_CheckPointStmt: return "CheckPointStmt"; break;
 		case T_CreateSchemaStmt: return "CreateSchemaStmt"; break;
 		case T_AlterDatabaseStmt: return "AlterDatabaseStmt"; break;
-		case T_AlterDatabaseRefreshCollStmt: return "AlterDatabaseRefreshCollStmt"; break;
 		case T_AlterDatabaseSetStmt: return "AlterDatabaseSetStmt"; break;
 		case T_AlterRoleSetStmt: return "AlterRoleSetStmt"; break;
 		case T_CreateConversionStmt: return "CreateConversionStmt"; break;

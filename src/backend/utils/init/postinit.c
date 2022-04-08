@@ -32,8 +32,8 @@
 #include "catalog/catalog.h"
 #include "catalog/namespace.h"
 #include "catalog/pg_authid.h"
-#include "catalog/pg_collation.h"
 #include "catalog/pg_database.h"
+#include "catalog/pg_collation.h"
 #include "catalog/pg_db_role_setting.h"
 #include "catalog/pg_tablespace.h"
 #include "libpq/auth.h"
@@ -439,38 +439,6 @@ CheckMyDatabase(const char *name, bool am_superuser, bool override_allow_connect
 	 * lot of things if applied globally.
 	 */
 	default_locale.deterministic = true;
-
-	/*
-	 * Check collation version.  See similar code in
-	 * pg_newlocale_from_collation().  Note that here we warn instead of error
-	 * in any case, so that we don't prevent connecting.
-	 */
-	datum = SysCacheGetAttr(DATABASEOID, tup, Anum_pg_database_datcollversion,
-							&isnull);
-	if (!isnull)
-	{
-		char	   *actual_versionstr;
-		char	   *collversionstr;
-
-		collversionstr = TextDatumGetCString(datum);
-
-		actual_versionstr = get_collation_actual_version(dbform->datlocprovider, dbform->datlocprovider == COLLPROVIDER_ICU ? iculocale : collate);
-		if (!actual_versionstr)
-			ereport(WARNING,
-					(errmsg("database \"%s\" has no actual collation version, but a version was recorded",
-							name)));
-		else if (strcmp(actual_versionstr, collversionstr) != 0)
-			ereport(WARNING,
-					(errmsg("database \"%s\" has a collation version mismatch",
-							name),
-					 errdetail("The database was created using collation version %s, "
-							   "but the operating system provides version %s.",
-							   collversionstr, actual_versionstr),
-					 errhint("Rebuild all objects in this database that use the default collation and run "
-							 "ALTER DATABASE %s REFRESH COLLATION VERSION, "
-							 "or build PostgreSQL with the right library version.",
-							 quote_identifier(name))));
-	}
 
 	/* Make the locale settings visible as GUC variables, too */
 	SetConfigOption("lc_collate", collate, PGC_INTERNAL, PGC_S_OVERRIDE);

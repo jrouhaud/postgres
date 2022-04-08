@@ -2757,7 +2757,6 @@ dumpDatabase(Archive *fout)
 				i_acldefault,
 				i_datistemplate,
 				i_datconnlimit,
-				i_datcollversion,
 				i_tablespace;
 	CatalogId	dbCatId;
 	DumpId		dbDumpId;
@@ -2792,9 +2791,9 @@ dumpDatabase(Archive *fout)
 	else
 		appendPQExpBuffer(dbQry, "0 AS datminmxid, ");
 	if (fout->remoteVersion >= 150000)
-		appendPQExpBuffer(dbQry, "datlocprovider, daticulocale, datcollversion, ");
+		appendPQExpBuffer(dbQry, "datlocprovider, daticulocale, ");
 	else
-		appendPQExpBuffer(dbQry, "'c' AS datlocprovider, NULL AS daticulocale, NULL AS datcollversion, ");
+		appendPQExpBuffer(dbQry, "'c' AS datlocprovider, NULL AS daticulocale, ");
 	appendPQExpBuffer(dbQry,
 					  "(SELECT spcname FROM pg_tablespace t WHERE t.oid = dattablespace) AS tablespace, "
 					  "shobj_description(oid, 'pg_database') AS description "
@@ -2818,7 +2817,6 @@ dumpDatabase(Archive *fout)
 	i_acldefault = PQfnumber(res, "acldefault");
 	i_datistemplate = PQfnumber(res, "datistemplate");
 	i_datconnlimit = PQfnumber(res, "datconnlimit");
-	i_datcollversion = PQfnumber(res, "datcollversion");
 	i_tablespace = PQfnumber(res, "tablespace");
 
 	dbCatId.tableoid = atooid(PQgetvalue(res, 0, i_tableoid));
@@ -2896,21 +2894,6 @@ dumpDatabase(Archive *fout)
 	{
 		appendPQExpBufferStr(creaQry, " ICU_LOCALE = ");
 		appendStringLiteralAH(creaQry, iculocale, fout);
-	}
-
-	/*
-	 * For binary upgrade, carry over the collation version.  For normal
-	 * dump/restore, omit the version, so that it is computed upon restore.
-	 */
-	if (dopt->binary_upgrade)
-	{
-		if (!PQgetisnull(res, 0, i_datcollversion))
-		{
-			appendPQExpBufferStr(creaQry, " COLLATION_VERSION = ");
-			appendStringLiteralAH(creaQry,
-								  PQgetvalue(res, 0, i_datcollversion),
-								  fout);
-		}
 	}
 
 	/*
