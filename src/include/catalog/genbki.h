@@ -45,6 +45,8 @@
  */
 #define BKI_LOOKUP(catalog)
 #define BKI_LOOKUP_OPT(catalog)
+/* Specifies the logical attribute number */
+#define ATTNUM(attnum)
 
 /*
  * These lines are processed by genbki.pl to create the statements

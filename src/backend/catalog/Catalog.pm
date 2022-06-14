@@ -253,6 +253,10 @@ sub ParseHeader
 							pk_cols  => 'oid'
 						  };
 					}
+					elsif ($attopt =~ /ATTNUM\((\w+)\)/)
+					{
+						$column{attnum} = $1;
+					}
 					else
 					{
 						die

@@ -36,9 +36,8 @@
  */
 CATALOG(pg_attribute,1249,AttributeRelationId) BKI_BOOTSTRAP BKI_ROWTYPE_OID(75,AttributeRelation_Rowtype_Id) BKI_SCHEMA_MACRO
 {
-	Oid			attrelid BKI_LOOKUP(pg_class);	/* OID of relation containing
+	Oid			attrelid BKI_LOOKUP(pg_class) ATTNUM(1);	/* OID of relation containing
 												 * this attribute */
-	NameData	attname;		/* name of attribute */
 
 	/*
 	 * atttypid is the OID of the instance in Catalog Class pg_type that
@@ -50,7 +49,7 @@ CATALOG(pg_attribute,1249,AttributeRelationId) BKI_BOOTSTRAP BKI_ROWTYPE_OID(75,
 	 * attbyval, and attalign to still tell us how large the values in the
 	 * table are.
 	 */
-	Oid			atttypid BKI_LOOKUP_OPT(pg_type);
+	Oid			atttypid BKI_LOOKUP_OPT(pg_type) ATTNUM(3);
 
 	/*
 	 * attstattarget is the target number of statistics datapoints to collect
@@ -59,13 +58,13 @@ CATALOG(pg_attribute,1249,AttributeRelationId) BKI_BOOTSTRAP BKI_ROWTYPE_OID(75,
 	 * that no value has been explicitly set for this column, so ANALYZE
 	 * should use the default setting.
 	 */
-	int32		attstattarget BKI_DEFAULT(-1);
+	int32		attstattarget BKI_DEFAULT(-1) ATTNUM(4);
 
 	/*
 	 * attlen is a copy of the typlen field from pg_type for this attribute.
 	 * See atttypid comments above.
 	 */
-	int16		attlen;
+	int16		attlen ATTNUM(5);
 
 	/*
 	 * attphysnum is the "attribute number" for the attribute:	A value that
@@ -80,18 +79,18 @@ CATALOG(pg_attribute,1249,AttributeRelationId) BKI_BOOTSTRAP BKI_ROWTYPE_OID(75,
 	 *
 	 * Note that (attphysnum - 1) is often used as the index to an array.
 	 */
-	int16		attphysnum;
+	int16		attphysnum ATTNUM(6);
 
 	/* FIXME Same as attphysnum, but for the "logical" order, e.g. for a
 	 * star-expansion.
 	 */
-	int16		attnum;
+	int16		attnum ATTNUM(7);
 
 	/*
 	 * attndims is the declared number of dimensions, if an array type,
 	 * otherwise zero.
 	 */
-	int32		attndims;
+	int32		attndims ATTNUM(8);
 
 	/*
 	 * fastgetattr() uses attcacheoff to cache byte offsets of attributes in
@@ -100,7 +99,7 @@ CATALOG(pg_attribute,1249,AttributeRelationId) BKI_BOOTSTRAP BKI_ROWTYPE_OID(75,
 	 * descriptor, we may then update attcacheoff in the copies. This speeds
 	 * up the attribute walking process.
 	 */
-	int32		attcacheoff BKI_DEFAULT(-1);
+	int32		attcacheoff BKI_DEFAULT(-1) ATTNUM(9);
 
 	/*
 	 * atttypmod records type-specific data supplied at table creation time
@@ -108,19 +107,19 @@ CATALOG(pg_attribute,1249,AttributeRelationId) BKI_BOOTSTRAP BKI_ROWTYPE_OID(75,
 	 * type-specific input and output functions as the third argument. The
 	 * value will generally be -1 for types that do not need typmod.
 	 */
-	int32		atttypmod BKI_DEFAULT(-1);
+	int32		atttypmod BKI_DEFAULT(-1) ATTNUM(10);
 
 	/*
 	 * attbyval is a copy of the typbyval field from pg_type for this
 	 * attribute.  See atttypid comments above.
 	 */
-	bool		attbyval;
+	bool		attbyval ATTNUM(11);
 
 	/*
 	 * attalign is a copy of the typalign field from pg_type for this
 	 * attribute.  See atttypid comments above.
 	 */
-	char		attalign;
+	char		attalign ATTNUM(12);
 
 	/*----------
 	 * attstorage tells for VARLENA attributes, what the heap access
@@ -128,7 +127,7 @@ CATALOG(pg_attribute,1249,AttributeRelationId) BKI_BOOTSTRAP BKI_ROWTYPE_OID(75,
 	 * Possible values are as for pg_type.typstorage (see TYPSTORAGE macros).
 	 *----------
 	 */
-	char		attstorage;
+	char		attstorage ATTNUM(13);
 
 	/*
 	 * attcompression sets the current compression method of the attribute.
@@ -138,25 +137,25 @@ CATALOG(pg_attribute,1249,AttributeRelationId) BKI_BOOTSTRAP BKI_ROWTYPE_OID(75,
 	 * However, this field is ignored whenever attstorage does not allow
 	 * compression.
 	 */
-	char		attcompression BKI_DEFAULT('\0');
+	char		attcompression BKI_DEFAULT('\0') ATTNUM(14);
 
 	/* This flag represents the "NOT NULL" constraint */
-	bool		attnotnull;
+	bool		attnotnull ATTNUM(15);
 
 	/* Has DEFAULT value or not */
-	bool		atthasdef BKI_DEFAULT(f);
+	bool		atthasdef BKI_DEFAULT(f) ATTNUM(16);
 
 	/* Has a missing value or not */
-	bool		atthasmissing BKI_DEFAULT(f);
+	bool		atthasmissing BKI_DEFAULT(f) ATTNUM(17);
 
 	/* One of the ATTRIBUTE_IDENTITY_* constants below, or '\0' */
-	char		attidentity BKI_DEFAULT('\0');
+	char		attidentity BKI_DEFAULT('\0') ATTNUM(18);
 
 	/* One of the ATTRIBUTE_GENERATED_* constants below, or '\0' */
-	char		attgenerated BKI_DEFAULT('\0');
+	char		attgenerated BKI_DEFAULT('\0') ATTNUM(19);
 
 	/* Is dropped (ie, logically invisible) or not */
-	bool		attisdropped BKI_DEFAULT(f);
+	bool		attisdropped BKI_DEFAULT(f) ATTNUM(20);
 
 	/*
 	 * This flag specifies whether this column has ever had a local
@@ -167,31 +166,33 @@ CATALOG(pg_attribute,1249,AttributeRelationId) BKI_BOOTSTRAP BKI_ROWTYPE_OID(75,
 	 * not dropped by a parent's DROP COLUMN even if this causes the column's
 	 * attinhcount to become zero.
 	 */
-	bool		attislocal BKI_DEFAULT(t);
+	bool		attislocal BKI_DEFAULT(t) ATTNUM(21);
 
 	/* Number of times inherited from direct parent relation(s) */
-	int32		attinhcount BKI_DEFAULT(0);
+	int32		attinhcount BKI_DEFAULT(0) ATTNUM(22);
+
+	NameData	attname ATTNUM(2);		/* name of attribute */
 
 	/* attribute's collation, if any */
-	Oid			attcollation BKI_LOOKUP_OPT(pg_collation);
+	Oid			attcollation BKI_LOOKUP_OPT(pg_collation) ATTNUM(23);
 
 #ifdef CATALOG_VARLEN			/* variable-length fields start here */
 	/* NOTE: The following fields are not present in tuple descriptors. */
 
 	/* Column-level access permissions */
-	aclitem		attacl[1] BKI_DEFAULT(_null_);
+	aclitem		attacl[1] BKI_DEFAULT(_null_) ATTNUM(24);
 
 	/* Column-level options */
-	text		attoptions[1] BKI_DEFAULT(_null_);
+	text		attoptions[1] BKI_DEFAULT(_null_) ATTNUM(25);
 
 	/* Column-level FDW options */
-	text		attfdwoptions[1] BKI_DEFAULT(_null_);
+	text		attfdwoptions[1] BKI_DEFAULT(_null_) ATTNUM(26);
 
 	/*
 	 * Missing value for added columns. This is a one element array which lets
 	 * us store a value of the attribute type here.
 	 */
-	anyarray	attmissingval BKI_DEFAULT(_null_);
+	anyarray	attmissingval BKI_DEFAULT(_null_) ATTNUM(27);
 #endif
 } FormData_pg_attribute;
 

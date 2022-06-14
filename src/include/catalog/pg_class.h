@@ -32,59 +32,56 @@
 CATALOG(pg_class,1259,RelationRelationId) BKI_BOOTSTRAP BKI_ROWTYPE_OID(83,RelationRelation_Rowtype_Id) BKI_SCHEMA_MACRO
 {
 	/* oid */
-	Oid			oid;
-
-	/* class name */
-	NameData	relname;
+	Oid			oid ATTNUM(1);
 
 	/* OID of namespace containing this class */
-	Oid			relnamespace BKI_DEFAULT(pg_catalog) BKI_LOOKUP(pg_namespace);
+	Oid			relnamespace BKI_DEFAULT(pg_catalog) BKI_LOOKUP(pg_namespace) ATTNUM(3);
 
 	/* OID of entry in pg_type for relation's implicit row type, if any */
-	Oid			reltype BKI_LOOKUP_OPT(pg_type);
+	Oid			reltype BKI_LOOKUP_OPT(pg_type) ATTNUM(4);
 
 	/* OID of entry in pg_type for underlying composite type, if any */
-	Oid			reloftype BKI_DEFAULT(0) BKI_LOOKUP_OPT(pg_type);
+	Oid			reloftype BKI_DEFAULT(0) BKI_LOOKUP_OPT(pg_type) ATTNUM(5);
 
 	/* class owner */
-	Oid			relowner BKI_DEFAULT(POSTGRES) BKI_LOOKUP(pg_authid);
+	Oid			relowner BKI_DEFAULT(POSTGRES) BKI_LOOKUP(pg_authid) ATTNUM(6);
 
 	/* access method; 0 if not a table / index */
-	Oid			relam BKI_DEFAULT(heap) BKI_LOOKUP_OPT(pg_am);
+	Oid			relam BKI_DEFAULT(heap) BKI_LOOKUP_OPT(pg_am) ATTNUM(7);
 
 	/* identifier of physical storage file */
 	/* relfilenode == 0 means it is a "mapped" relation, see relmapper.c */
-	Oid			relfilenode BKI_DEFAULT(0);
+	Oid			relfilenode BKI_DEFAULT(0) ATTNUM(8);
 
 	/* identifier of table space for relation (0 means default for database) */
-	Oid			reltablespace BKI_DEFAULT(0) BKI_LOOKUP_OPT(pg_tablespace);
+	Oid			reltablespace BKI_DEFAULT(0) BKI_LOOKUP_OPT(pg_tablespace) ATTNUM(9);
 
 	/* # of blocks (not always up-to-date) */
-	int32		relpages BKI_DEFAULT(0);
+	int32		relpages BKI_DEFAULT(0) ATTNUM(10);
 
 	/* # of tuples (not always up-to-date; -1 means "unknown") */
-	float4		reltuples BKI_DEFAULT(-1);
+	float4		reltuples BKI_DEFAULT(-1) ATTNUM(11);
 
 	/* # of all-visible blocks (not always up-to-date) */
-	int32		relallvisible BKI_DEFAULT(0);
+	int32		relallvisible BKI_DEFAULT(0) ATTNUM(12);
 
 	/* OID of toast table; 0 if none */
-	Oid			reltoastrelid BKI_DEFAULT(0) BKI_LOOKUP_OPT(pg_class);
+	Oid			reltoastrelid BKI_DEFAULT(0) BKI_LOOKUP_OPT(pg_class) ATTNUM(13);
 
 	/* T if has (or has had) any indexes */
-	bool		relhasindex BKI_DEFAULT(f);
+	bool		relhasindex BKI_DEFAULT(f) ATTNUM(14);
 
 	/* T if shared across databases */
-	bool		relisshared BKI_DEFAULT(f);
+	bool		relisshared BKI_DEFAULT(f) ATTNUM(15);
 
 	/* see RELPERSISTENCE_xxx constants below */
-	char		relpersistence BKI_DEFAULT(p);
+	char		relpersistence BKI_DEFAULT(p) ATTNUM(16);
 
 	/* see RELKIND_xxx constants below */
-	char		relkind BKI_DEFAULT(r);
+	char		relkind BKI_DEFAULT(r) ATTNUM(17);
 
 	/* number of user attributes */
-	int16		relnatts BKI_DEFAULT(0);	/* genbki.pl will fill this in */
+	int16		relnatts BKI_DEFAULT(0) ATTNUM(18);	/* genbki.pl will fill this in */
 
 	/*
 	 * Class pg_attribute must contain exactly "relnatts" user attributes
@@ -93,51 +90,54 @@ CATALOG(pg_class,1259,RelationRelationId) BKI_BOOTSTRAP BKI_ROWTYPE_OID(83,Relat
 	 */
 
 	/* # of CHECK constraints for class */
-	int16		relchecks BKI_DEFAULT(0);
+	int16		relchecks BKI_DEFAULT(0) ATTNUM(19);
 
 	/* has (or has had) any rules */
-	bool		relhasrules BKI_DEFAULT(f);
+	bool		relhasrules BKI_DEFAULT(f) ATTNUM(20);
 
 	/* has (or has had) any TRIGGERs */
-	bool		relhastriggers BKI_DEFAULT(f);
+	bool		relhastriggers BKI_DEFAULT(f) ATTNUM(21);
 
 	/* has (or has had) child tables or indexes */
-	bool		relhassubclass BKI_DEFAULT(f);
+	bool		relhassubclass BKI_DEFAULT(f) ATTNUM(22);
 
 	/* row security is enabled or not */
-	bool		relrowsecurity BKI_DEFAULT(f);
+	bool		relrowsecurity BKI_DEFAULT(f) ATTNUM(23);
 
 	/* row security forced for owners or not */
-	bool		relforcerowsecurity BKI_DEFAULT(f);
+	bool		relforcerowsecurity BKI_DEFAULT(f) ATTNUM(24);
 
 	/* matview currently holds query results */
-	bool		relispopulated BKI_DEFAULT(t);
+	bool		relispopulated BKI_DEFAULT(t) ATTNUM(25);
 
 	/* see REPLICA_IDENTITY_xxx constants */
-	char		relreplident BKI_DEFAULT(n);
+	char		relreplident BKI_DEFAULT(n) ATTNUM(26);
 
 	/* is relation a partition? */
-	bool		relispartition BKI_DEFAULT(f);
+	bool		relispartition BKI_DEFAULT(f) ATTNUM(27);
 
 	/* link to original rel during table rewrite; otherwise 0 */
-	Oid			relrewrite BKI_DEFAULT(0) BKI_LOOKUP_OPT(pg_class);
+	Oid			relrewrite BKI_DEFAULT(0) BKI_LOOKUP_OPT(pg_class) ATTNUM(28);
 
 	/* all Xids < this are frozen in this rel */
-	TransactionId relfrozenxid BKI_DEFAULT(3);	/* FirstNormalTransactionId */
+	TransactionId relfrozenxid BKI_DEFAULT(3) ATTNUM(29);	/* FirstNormalTransactionId */
+
+	/* class name */
+	NameData	relname ATTNUM(2);
 
 	/* all multixacts in this rel are >= this; it is really a MultiXactId */
-	TransactionId relminmxid BKI_DEFAULT(1);	/* FirstMultiXactId */
+	TransactionId relminmxid BKI_DEFAULT(1) ATTNUM(30);	/* FirstMultiXactId */
 
 #ifdef CATALOG_VARLEN			/* variable-length fields start here */
 	/* NOTE: These fields are not present in a relcache entry's rd_rel field. */
 	/* access permissions */
-	aclitem		relacl[1] BKI_DEFAULT(_null_);
+	aclitem		relacl[1] BKI_DEFAULT(_null_) ATTNUM(31);
 
 	/* access-method-specific options */
-	text		reloptions[1] BKI_DEFAULT(_null_);
+	text		reloptions[1] BKI_DEFAULT(_null_) ATTNUM(32);
 
 	/* partition bound node tree */
-	pg_node_tree relpartbound BKI_DEFAULT(_null_);
+	pg_node_tree relpartbound BKI_DEFAULT(_null_) ATTNUM(33);
 #endif
 } FormData_pg_class;
 

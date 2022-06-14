@@ -847,6 +847,7 @@ sub gen_pg_attribute
 		# Generate entries for user attributes.
 		my $attphysnum          = 0;
 		my $priorfixedwidth = 1;
+		my %mappings;
 		foreach my $attr (@{ $table->{columns} })
 		{
 			$attphysnum++;
@@ -856,6 +857,31 @@ sub gen_pg_attribute
 			$row{attrelid} = $table->{relation_oid};
 
 			morph_row_for_pgattr(\%row, $schema, $attr, $priorfixedwidth);
+
+			# Sanity checks for the assigned attnum
+			if ($row{attnum} <= 0)
+			{
+				warn sprintf "Invalid attnum %d for attribute %s of table %s",
+				$row{attnum}, $row{attname}, $table_name;
+				$num_errors++;
+			}
+
+			if ($row{attnum} > $table->{columns})
+			{
+				warn sprintf "Invalid attnum %d for attribute %s of table %s",
+				$row{attnum}, $row{attname}, $table_name;
+				$num_errors++;
+			}
+
+			if (exists $mappings{$row{attnum}})
+			{
+				warn sprintf "Attnum %d used for columns %s and %s in table %s",
+				$row{attnum}, $mappings{$row{attnum}}, $row{attname},
+				$table_name;
+				$num_errors++;
+			}
+
+			$mappings{$row{attnum}} = $row{attname};
 
 			# Update $priorfixedwidth --- must match morph_row_for_pgattr
 			$priorfixedwidth &=
@@ -870,6 +896,20 @@ sub gen_pg_attribute
 			push @{ $schemapg_entries{$table_name} },
 			  sprintf "{ %s }",
 			  join(', ', grep { defined $_ } @row{@attnames});
+		}
+
+		# Complain if there's any "hole" in the attnum sequence.  Prior code
+		# should have already complained about inconsistencies, but this can
+		# save some time by explicitly mentionning which attnums are missing as
+		# a result.
+		for (my $i = 1; $i <= $attphysnum; $i++)
+		{
+			if (not exists($mappings{$i}))
+			{
+				warn sprintf "No attnum %d defined for table %s",
+				$i, $table_name;
+				$num_errors++;
+			}
 		}
 
 		# Generate entries for system attributes.
@@ -912,6 +952,17 @@ sub morph_row_for_pgattr
 	my ($row, $pgattr_schema, $attr, $priorfixedwidth) = @_;
 	my $attname = $attr->{name};
 	my $atttype = $attr->{type};
+
+	# use the attnum previously found in the headers if any, otherwise fallback
+	# to attphysnum
+	if (defined $attr->{attnum})
+	{
+		$row->{attnum} = $attr->{attnum};
+	}
+	else
+	{
+		$row->{attnum} = $row->{attphysnum};
+	}
 
 	$row->{attname} = $attname;
 
