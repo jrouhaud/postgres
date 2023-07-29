@@ -287,8 +287,8 @@ static WindowAgg *make_windowagg(List *tlist, Index winref,
 								 int frameOptions, Node *startOffset, Node *endOffset,
 								 Oid startInRangeFunc, Oid endInRangeFunc,
 								 Oid inRangeColl, bool inRangeAsc, bool inRangeNullsFirst,
-								 List *runCondition, List *qual, bool topWindow,
-								 Plan *lefttree);
+								 List *runCondition, List *qualifyClause,
+								 List *qual, bool topWindow, Plan *lefttree);
 static Group *make_group(List *tlist, List *qual, int numGroupCols,
 						 AttrNumber *grpColIdx, Oid *grpOperators, Oid *grpCollations,
 						 Plan *lefttree);
@@ -2698,6 +2698,7 @@ create_windowagg_plan(PlannerInfo *root, WindowAggPath *best_path)
 						  wc->inRangeAsc,
 						  wc->inRangeNullsFirst,
 						  wc->runCondition,
+						  wc->qualifyClause,
 						  best_path->qual,
 						  best_path->topwindow,
 						  subplan);
@@ -6602,7 +6603,8 @@ make_windowagg(List *tlist, Index winref,
 			   int frameOptions, Node *startOffset, Node *endOffset,
 			   Oid startInRangeFunc, Oid endInRangeFunc,
 			   Oid inRangeColl, bool inRangeAsc, bool inRangeNullsFirst,
-			   List *runCondition, List *qual, bool topWindow, Plan *lefttree)
+			   List *runCondition, List *qualifyClause, List *qual,
+			   bool topWindow, Plan *lefttree)
 {
 	WindowAgg  *node = makeNode(WindowAgg);
 	Plan	   *plan = &node->plan;
@@ -6620,6 +6622,7 @@ make_windowagg(List *tlist, Index winref,
 	node->startOffset = startOffset;
 	node->endOffset = endOffset;
 	node->runCondition = runCondition;
+	node->qualifyClause = qualifyClause;
 	/* a duplicate of the above for EXPLAIN */
 	node->runConditionOrig = runCondition;
 	node->startInRangeFunc = startInRangeFunc;
